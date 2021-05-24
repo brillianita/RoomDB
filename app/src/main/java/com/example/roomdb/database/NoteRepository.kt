@@ -1,21 +1,21 @@
 package com.example.roomdb.database
 
 class NoteRepository(private val dao: NoteDao) {
-    val notes = dao.getAllNote()
+    val notes = dao.getAllNotes()
 
-    suspend fun insert(note: Note) : Long{
-        return dao.insertNote(note)
+    suspend fun insert(note: Note) {
+        dao.insertNote(note)
     }
 
-    suspend fun update(note: Note) : Int{
-        return dao.UpdateNote(note)
+    suspend fun update(note: Note) {
+        dao.UpdateNote(note)
     }
 
-    suspend fun delete(note: Note) : Int{
-        return dao.deleteNote(note)
+    suspend fun delete(note: Note) {
+        dao.deleteNote(note)
     }
 
-    suspend fun deleteAll(): Int{
-        return dao.deleteAll()
+    suspend fun deleteAll(){
+        dao.deleteAll()
     }
 }

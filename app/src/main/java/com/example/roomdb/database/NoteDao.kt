@@ -19,7 +19,7 @@ interface NoteDao {
     suspend fun deleteAll() : Int
 
     @Query("SELECT * FROM table_note")
-    fun getAllNote():LiveData<List<Note>>
+    fun getAllNotes():LiveData<List<Note>>
 
 
 }
