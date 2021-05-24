@@ -3,6 +3,7 @@ package com.example.roomdb
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -37,8 +38,13 @@ class MainActivity : AppCompatActivity() {
     private fun displayNotesList(){
         noteViewModel.notes.observe(this, Observer{
             Log.i("MYTAG", it.toString())
-            binding.recyvw.adapter = NoteAdapter(it)
+            binding.recyvw.adapter = NoteAdapter(it, {selectedItem:Note->listItemClicked(selectedItem)})
         })
+    }
+
+    private fun listItemClicked(note: Note) {
+        Toast.makeText(this, "Selected ${note.title}", Toast.LENGTH_LONG).show()
+        noteViewModel.initUpdateAndDelete(note)
     }
 
 }

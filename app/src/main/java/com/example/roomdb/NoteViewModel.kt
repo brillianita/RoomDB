@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Observable{
 
     val notes = repository.notes
+    private var isUpdateOrDelete = false
+    private lateinit var noteToUpdateOrDelete : Note
     @Bindable
     val inputTitle = MutableLiveData<String>()
 
@@ -22,23 +24,35 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
     val saveOrUpdateButtonText = MutableLiveData<String>()
 
     @Bindable
-    val deleteOrDeleteAll = MutableLiveData<String>()
+    val deleteOrDeleteAllButtonText = MutableLiveData<String>()
 
     init {
         saveOrUpdateButtonText.value = "Save"
-        deleteOrDeleteAll.value = "Delete All"
+        deleteOrDeleteAllButtonText.value = "Delete All"
     }
 
     fun saveOrUpdateButtonText(){
-        val title = inputTitle.value!!
-        val content = inputContent.value!!
-        insert(Note(0, title,content))
-        inputTitle.value = ""
-        inputContent.value = ""
+        if(isUpdateOrDelete){
+            noteToUpdateOrDelete.title = inputTitle.value!!
+            noteToUpdateOrDelete.content = inputContent.value!!
+            update(noteToUpdateOrDelete)
+        }else{
+            val title = inputTitle.value!!
+            val content = inputContent.value!!
+            insert(Note(0, title,content))
+            inputTitle.value = ""
+            inputContent.value = ""
+        }
+
     }
 
     fun deleteOrDeleteAllButtonText(){
-        deleteAll()
+        if(isUpdateOrDelete){
+            delete(noteToUpdateOrDelete)
+        } else{
+            deleteAll()
+
+        }
     }
 
     private fun insert(note: Note) = viewModelScope.launch {
@@ -47,16 +61,35 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
 
     fun update(note: Note) = viewModelScope.launch {
         repository.update(note)
+        inputTitle.value=null
+        inputContent.value=null
+        isUpdateOrDelete=false
+        noteToUpdateOrDelete=note
+        saveOrUpdateButtonText.value = "Save"
+        deleteOrDeleteAllButtonText.value = "Delete All"
     }
 
     fun delete(note: Note) = viewModelScope.launch {
-        repository.delete(note)
+        inputTitle.value=null
+        inputContent.value=null
+        isUpdateOrDelete=false
+        noteToUpdateOrDelete=note
+        saveOrUpdateButtonText.value = "Save"
+        deleteOrDeleteAllButtonText.value = "Delete All"
     }
 
     fun deleteAll() = viewModelScope.launch {
         repository.deleteAll()
     }
 
+    fun initUpdateAndDelete(note: Note){
+        inputTitle.value=note.title
+        inputContent.value=note.content
+        isUpdateOrDelete=true
+        noteToUpdateOrDelete=note
+        saveOrUpdateButtonText.value = "Update"
+        deleteOrDeleteAllButtonText.value = "Delete"
+    }
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
 
     }
