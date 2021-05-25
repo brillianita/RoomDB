@@ -70,6 +70,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel(), Obser
     }
 
     fun delete(note: Note) = viewModelScope.launch {
+        repository.delete(note)
         inputTitle.value=null
         inputContent.value=null
         isUpdateOrDelete=false

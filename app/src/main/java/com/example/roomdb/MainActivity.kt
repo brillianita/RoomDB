@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun listItemClicked(note: Note) {
-        Toast.makeText(this, "Selected ${note.title}", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "${note.title} is selected", Toast.LENGTH_LONG).show()
         noteViewModel.initUpdateAndDelete(note)
     }
 
